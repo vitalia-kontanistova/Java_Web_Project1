@@ -10,12 +10,13 @@ import java.util.List;
 
 public class EllipseObservable implements Observable<Observer<Ellipse>> {
 
-    private List<Observer<Ellipse>> observers = new ArrayList<>();
+    private List<Observer<Ellipse>> observers;
     private Ellipse ellipse;
     private EllipseServiceImpl ellipseService;
 
     public EllipseObservable() {
         ellipseService = EllipseServiceImpl.getInstance();
+        observers = new ArrayList<>();
     }
 
     @Override
@@ -58,7 +59,7 @@ public class EllipseObservable implements Observable<Observer<Ellipse>> {
                 ellipseService.updateEllipse(ellipse);
                 notifyObservers();
             } else throw new ServiceException("Trying to create invalid ellipse.");
-        } catch (ServiceException e) {
+        } catch (NullPointerException | ServiceException e) {
             throw new ServiceException("EllipseObservable: setPoints(): " + e.getMessage());
         }
     }
