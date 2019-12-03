@@ -1,6 +1,7 @@
 package by.epam.ellipse.repository;
 
 import by.epam.ellipse.entity.Ellipse;
+import by.epam.ellipse.entity.Point;
 import by.epam.ellipse.repository.exception.RepositoryException;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public interface Repository {
     void add(Ellipse ellipse) throws RepositoryException;
 
-    void update(Ellipse ellipse);
+    void update(Specification specification, Object identifier, Point pointA, Point pointB) throws RepositoryException;
 
     void remove(Specification specification, Object identifier) throws RepositoryException;
 

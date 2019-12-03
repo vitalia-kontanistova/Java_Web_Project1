@@ -2,8 +2,11 @@ package by.epam.ellipse.repository.impl;
 
 import by.epam.ellipse.comparator.IdComparator;
 import by.epam.ellipse.entity.Ellipse;
+import by.epam.ellipse.entity.Point;
 import by.epam.ellipse.repository.Specification;
 import by.epam.ellipse.repository.exception.RepositoryException;
+import by.epam.ellipse.service.EllipseServiceImpl;
+import by.epam.ellipse.service.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,27 @@ public class IdSpecification implements Specification {
     }
 
     @Override
-    public List<Ellipse> takeAll(List<Ellipse> ellipses) throws RepositoryException {
+    public void update(List<Ellipse> ellipses, Object identifier, Point pointA, Point pointB) throws RepositoryException {
+        try {
+            if (identifier instanceof Integer) {
+                Integer id = (Integer) identifier;
+
+                for (int i = 0; i < ellipses.size(); i++) {
+                    Ellipse currentEllipse = ellipses.get(i);
+                    if (currentEllipse.getId() == id) {
+                        currentEllipse.setPointA(pointA);
+                        currentEllipse.setPointB(pointB);
+                        EllipseServiceImpl.getInstance().updateEllipse(currentEllipse);
+                    }
+                }
+            }
+        } catch (NullPointerException | ServiceException e) {
+            throw new RepositoryException("IdSpecification: update(): " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Ellipse> sort(List<Ellipse> ellipses) throws RepositoryException {
         try {
             List<Ellipse> newEllipses = new ArrayList<>();
             for (Ellipse ellipse : ellipses) {
@@ -38,7 +61,7 @@ public class IdSpecification implements Specification {
 
             return ellipses;
         } catch (NullPointerException | CloneNotSupportedException e) {
-            throw new RepositoryException("IdSpecification: takeAll(): " + e.getMessage());
+            throw new RepositoryException("IdSpecification: sort(): " + e.getMessage());
         }
     }
 

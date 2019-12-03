@@ -2,8 +2,11 @@ package by.epam.ellipse.repository.impl;
 
 import by.epam.ellipse.comparator.AreaComparator;
 import by.epam.ellipse.entity.Ellipse;
+import by.epam.ellipse.entity.Point;
 import by.epam.ellipse.repository.Specification;
 import by.epam.ellipse.repository.exception.RepositoryException;
+import by.epam.ellipse.service.EllipseServiceImpl;
+import by.epam.ellipse.service.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,7 @@ public class AreaSpecification implements Specification {
     }
 
     @Override
-    public List<Ellipse> takeAll(List<Ellipse> ellipses) throws RepositoryException {
+    public List<Ellipse> sort(List<Ellipse> ellipses) throws RepositoryException {
         try {
             List<Ellipse> newEllipses = new ArrayList<>();
             for (Ellipse ellipse : ellipses) {
@@ -38,10 +41,30 @@ public class AreaSpecification implements Specification {
 
             return ellipses;
         } catch (NullPointerException | CloneNotSupportedException e) {
-            throw new RepositoryException("AreaSpecification: takeAll(): " + e.getMessage());
+            throw new RepositoryException("AreaSpecification: sort(): " + e.getMessage());
         }
     }
 
+    @Override
+    public void update(List<Ellipse> ellipses, Object identifier, Point pointA, Point pointB) throws RepositoryException {
+        try {
+            if (identifier instanceof Double) {
+                Double area = (Double) identifier;
+
+                for (int i = 0; i < ellipses.size(); i++) {
+                    Ellipse currentEllipse = ellipses.get(i);
+                    if (currentEllipse.getArea() - area < 0.01) {
+                        currentEllipse.setPointA(pointA);
+                        currentEllipse.setPointB(pointB);
+                        EllipseServiceImpl.getInstance().updateEllipse(currentEllipse);
+                        return;
+                    }
+                }
+            }
+        } catch (NullPointerException | ServiceException e) {
+            throw new RepositoryException("AreaSpecification: update(): " + e.getMessage());
+        }
+    }
 
     @Override
     public List<Ellipse> takeSome(List<Ellipse> ellipses, Object from, Object till) throws RepositoryException {

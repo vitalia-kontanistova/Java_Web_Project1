@@ -1,7 +1,7 @@
 package by.epam.ellipse.repository.impl;
 
 import by.epam.ellipse.entity.Ellipse;
-import by.epam.ellipse.dao.exception.DAOexception;
+import by.epam.ellipse.entity.Point;
 import by.epam.ellipse.repository.Repository;
 import by.epam.ellipse.repository.Specification;
 import by.epam.ellipse.repository.exception.RepositoryException;
@@ -37,7 +37,14 @@ public class RepositoryImpl implements Repository {
 
 
     @Override
-    public void update(Ellipse ellipse) {
+    public void update(Specification specification, Object identifier, Point pointA, Point pointB) throws RepositoryException {
+        try {
+            specification.update(ellipses, identifier, pointA, pointB);
+        } catch (RepositoryException e) {
+            throw new RepositoryException("RepositoryImpl: remove(): " + e.getMessage());
+            //запись в лог
+        }
+
     }
 
     @Override
@@ -53,9 +60,9 @@ public class RepositoryImpl implements Repository {
     @Override
     public List<Ellipse> takeAll(Specification specification) throws RepositoryException {
         try {
-            return specification.takeAll(ellipses);
+            return specification.sort(ellipses);
         } catch (RepositoryException e) {
-            throw new RepositoryException("RepositoryImpl: takeAll(): " + e.getMessage());
+            throw new RepositoryException("RepositoryImpl: sort(): " + e.getMessage());
             //запись в лог
         }
     }
