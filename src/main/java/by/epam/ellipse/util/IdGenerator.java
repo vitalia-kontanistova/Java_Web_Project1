@@ -1,7 +1,6 @@
 package by.epam.ellipse.util;
 
 import by.epam.ellipse.entity.Ellipse;
-import by.epam.ellipse.registrar.EllipseObservable;
 
 import java.util.List;
 
@@ -16,14 +15,13 @@ public class IdGenerator {
         return instance;
     }
 
-    public int generate(List<EllipseObservable> ellipseObservables) {
-        if (ellipseObservables != null && !ellipseObservables.isEmpty()) {
+    public int generate(List<Ellipse> ellipses) {
+        if (ellipses != null && !ellipses.isEmpty()) {
 
-            int index = ellipseObservables.size() - 1;
+            int index = ellipses.size() - 1;
 
-            EllipseObservable ellipseObservable = ellipseObservables.get(index);
-            Ellipse ellipse = ellipseObservable.getEllipse();
-            return ellipse.getId() + 1;
+            Ellipse currentEllipse = ellipses.get(index);
+            return currentEllipse.getId() + 1;
         }
         return 1;
     }

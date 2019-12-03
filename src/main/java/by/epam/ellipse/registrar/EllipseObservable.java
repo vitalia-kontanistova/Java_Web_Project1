@@ -1,9 +1,9 @@
 package by.epam.ellipse.registrar;
 
 import by.epam.ellipse.entity.Ellipse;
+import by.epam.ellipse.entity.Point;
 import by.epam.ellipse.service.exception.ServiceException;
-import by.epam.ellipse.service.impl.EllipseServiceImpl;
-import by.epam.ellipse.service.impl.ParametersServiceImpl;
+import by.epam.ellipse.service.EllipseServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,10 @@ public class EllipseObservable implements Observable<Observer<Ellipse>> {
 
     private List<Observer<Ellipse>> observers = new ArrayList<>();
     private Ellipse ellipse;
+    private EllipseServiceImpl ellipseService;
 
     public EllipseObservable() {
+        ellipseService = EllipseServiceImpl.getInstance();
     }
 
     @Override
@@ -27,19 +29,20 @@ public class EllipseObservable implements Observable<Observer<Ellipse>> {
 
     @Override
     public void notifyObservers() throws ServiceException {
-        for (Observer<Ellipse> o : observers) {
+        for (Observer<Ellipse> observer : observers) {
             try {
-                o.update(this.ellipse, ParametersServiceImpl.getInstance());
+                observer.update(this.ellipse);
             } catch (ServiceException e) {
                 throw new ServiceException("EllipseObservable: notifyObservers(): " + e.getMessage());
             }
         }
     }
 
-    public void setEllipse(Ellipse ellipse, EllipseServiceImpl ellipseService) throws ServiceException {
+    public void setEllipse(Ellipse ellipse) throws ServiceException {
         try {
-            if (ellipseService.isEllipseExist(ellipse, ParametersServiceImpl.getInstance())) {
+            if (ellipseService.isEllipseExist(ellipse)) {
                 this.ellipse = ellipse;
+                ellipseService.updateEllipse(ellipse);
                 notifyObservers();
             } else throw new ServiceException("Trying to create invalid ellipse.");
         } catch (ServiceException e) {
@@ -47,11 +50,12 @@ public class EllipseObservable implements Observable<Observer<Ellipse>> {
         }
     }
 
-    public void setPoints(Ellipse.Point pointA, Ellipse.Point pointB, EllipseServiceImpl ellipseService) throws ServiceException {
+    public void setPoints(Point pointA, Point pointB) throws ServiceException {
         try {
-            if (ellipseService.isEllipseExist(new Ellipse(pointA, pointB), ParametersServiceImpl.getInstance())) {
+            if (ellipseService.isEllipseExist(new Ellipse(pointA, pointB))) {
                 this.ellipse.setPointA(pointA);
                 this.ellipse.setPointB(pointB);
+                ellipseService.updateEllipse(ellipse);
                 notifyObservers();
             } else throw new ServiceException("Trying to create invalid ellipse.");
         } catch (ServiceException e) {
@@ -59,11 +63,11 @@ public class EllipseObservable implements Observable<Observer<Ellipse>> {
         }
     }
 
-    public void setPointA(Ellipse.Point pointA) throws ServiceException {
-        setPoints(pointA, ellipse.getPointB(), EllipseServiceImpl.getInstance());
+    public void setPointA(Point pointA) throws ServiceException {
+        setPoints(pointA, ellipse.getPointB());
     }
 
-    public void setPointB(Ellipse.Point pointB) throws ServiceException {
-        setPoints(ellipse.getPointA(), pointB, EllipseServiceImpl.getInstance());
+    public void setPointB(Point pointB) throws ServiceException {
+        setPoints(ellipse.getPointA(), pointB);
     }
 }

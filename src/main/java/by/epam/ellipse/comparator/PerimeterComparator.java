@@ -1,18 +1,13 @@
 package by.epam.ellipse.comparator;
 
-import by.epam.ellipse.entity.Parameters;
+import by.epam.ellipse.entity.Ellipse;
 
 import java.util.Comparator;
 
-public class PerimeterComparator implements Comparator<Parameters> {
-    @Override
-    public int compare(Parameters parameters1, Parameters parameters2) {
-        double result = parameters1.getPerimeter() - parameters2.getPerimeter();
 
-        if (result < -0.01) {
-            return -1;
-        } else if (result > 0.01) {
-            return 1;
-        } else return 0;
+public class PerimeterComparator implements Comparator<Ellipse> {
+    @Override
+    public int compare(Ellipse ellipse1, Ellipse ellipse2) {
+        return Double.compare(ellipse1.getPerimeter(), ellipse2.getPerimeter());
     }
 }

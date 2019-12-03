@@ -3,7 +3,7 @@ package by.epam.ellipse.dao;
 import by.epam.ellipse.dao.exception.DAOexception;
 import by.epam.ellipse.entity.Ellipse;
 import by.epam.ellipse.service.exception.ServiceException;
-import by.epam.ellipse.service.impl.EllipseServiceImpl;
+import by.epam.ellipse.service.EllipseServiceImpl;
 import by.epam.ellipse.util.FileManipulator;
 
 import java.util.List;

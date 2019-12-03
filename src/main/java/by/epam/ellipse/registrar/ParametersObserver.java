@@ -1,29 +1,35 @@
 package by.epam.ellipse.registrar;
 
 import by.epam.ellipse.entity.Ellipse;
-import by.epam.ellipse.entity.Parameters;
 import by.epam.ellipse.service.exception.ServiceException;
-import by.epam.ellipse.service.impl.EllipseServiceImpl;
-import by.epam.ellipse.service.impl.ParametersServiceImpl;
+import by.epam.ellipse.service.EllipseServiceImpl;
 
 
 public class ParametersObserver implements Observer<Ellipse> {
 
-    private Parameters parameters;
+    private double area;
+    private double perimeter;
+    private EllipseServiceImpl ellipseService;
 
     public ParametersObserver(EllipseObservable ellipseObservable) {
-        parameters = new Parameters();
+        ellipseService = EllipseServiceImpl.getInstance();
         ellipseObservable.add(this);
     }
 
-    public Parameters getParameters() {
-        return this.parameters;
+    public double getArea() {
+        return this.area;
+    }
+
+    public double getPerimeter() {
+        return this.perimeter;
     }
 
     @Override
-    public void update(Ellipse ellipse, ParametersServiceImpl parametersService) throws ServiceException {
+    public void update(Ellipse ellipse) throws ServiceException {
         try {
-            parametersService.updateParameters(this.parameters, ellipse, EllipseServiceImpl.getInstance());
+            area = ellipseService.findArea(ellipse);
+            perimeter = ellipseService.findPerimeter(ellipse);
+
         } catch (NullPointerException | ServiceException e) {
             throw new ServiceException("ParametersObserver: updateParameters(): " + e.getMessage());
         }

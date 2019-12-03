@@ -1,70 +1,63 @@
 package by.epam.ellipse.repository.impl;
 
 import by.epam.ellipse.entity.Ellipse;
-import by.epam.ellipse.registrar.EllipseObservable;
-import by.epam.ellipse.registrar.ParametersObserver;
 import by.epam.ellipse.dao.exception.DAOexception;
 import by.epam.ellipse.repository.Repository;
 import by.epam.ellipse.repository.Specification;
 import by.epam.ellipse.repository.exception.RepositoryException;
-import by.epam.ellipse.service.exception.ServiceException;
-import by.epam.ellipse.service.impl.EllipseServiceImpl;
 import by.epam.ellipse.util.IdGenerator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RepositoryImpl implements Repository {
 
-    private List<EllipseObservable> ellipses;
-    private Map<Integer, ParametersObserver> ellipseParameters;
+    private List<Ellipse> ellipses;
+    private IdGenerator idGenerator;
 
 
     public RepositoryImpl() {
         ellipses = new ArrayList<>();
-        ellipseParameters = new HashMap<>();
+        idGenerator = IdGenerator.getInstance();
     }
 
     @Override
-    public void add(Ellipse ellipse, IdGenerator idGenerator) throws RepositoryException {
+    public void add(Ellipse ellipse) throws RepositoryException {
         try {
             int id = idGenerator.generate(ellipses);
             ellipse.setId(id);
 
-            EllipseObservable ellipseObservable = new EllipseObservable();
-            ParametersObserver paramObserver = new ParametersObserver(ellipseObservable);
-            ellipseObservable.setEllipse(ellipse, EllipseServiceImpl.getInstance());
+            ellipses.add(ellipse);
 
-
-            ellipses.add(ellipseObservable);
-            ellipseParameters.put(id, paramObserver);
-
-        } catch (NullPointerException | ServiceException e) {
+        } catch (NullPointerException e) {
             throw new RepositoryException("RepositoryImpl: add(): " + e.getMessage());
             //запись в лог
         }
     }
 
+
     @Override
-    public void update(Ellipse item) {
+    public void update(Ellipse ellipse) {
     }
 
     @Override
     public void remove(Specification specification, Object identifier) throws RepositoryException {
         try {
             specification.remove(ellipses, identifier);
-        } catch (DAOexception e) {
+        } catch (RepositoryException e) {
             throw new RepositoryException("RepositoryImpl: remove(): " + e.getMessage());
             //запись в лог
         }
-        coordinateRemoving();
     }
 
     @Override
-    public List<Ellipse> takeAll(Specification specification) {
-        return specification.takeAll(ellipses);
+    public List<Ellipse> takeAll(Specification specification) throws RepositoryException {
+        try {
+            return specification.takeAll(ellipses);
+        } catch (RepositoryException e) {
+            throw new RepositoryException("RepositoryImpl: takeAll(): " + e.getMessage());
+            //запись в лог
+        }
     }
 
 
@@ -72,7 +65,7 @@ public class RepositoryImpl implements Repository {
     public List<Ellipse> takeSome(Specification specification, Object from, Object till) throws RepositoryException {
         try {
             return specification.takeSome(ellipses, from, till);
-        } catch (DAOexception e) {
+        } catch (RepositoryException e) {
             throw new RepositoryException("RepositoryImpl: takeSome(): " + e.getMessage());
             //запись в лог
         }
@@ -82,26 +75,9 @@ public class RepositoryImpl implements Repository {
     public Ellipse takeOne(Specification specification, Object identifier) throws RepositoryException {
         try {
             return specification.takeOne(ellipses, identifier);
-        } catch (DAOexception e) {
-            throw new RepositoryException("RepositoryImpl: takeSome(): " + e.getMessage());
+        } catch (RepositoryException e) {
+            throw new RepositoryException("RepositoryImpl: takeOne(): " + e.getMessage());
             //запись в лог
-        }
-    }
-
-    private void coordinateRemoving() {
-        List<Integer> idBase = new ArrayList<>(ellipseParameters.keySet());
-
-        for (int currentId : idBase) {
-            boolean missingId = true;
-            for (EllipseObservable ellipseObservable : ellipses) {
-                Ellipse currentEllipse = ellipseObservable.getEllipse();
-                if (currentEllipse.getId() == currentId) {
-                    missingId = false;
-                }
-            }
-            if (missingId) {
-                ellipseParameters.remove(currentId);
-            }
         }
     }
 }

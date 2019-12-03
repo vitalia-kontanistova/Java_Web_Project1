@@ -1,18 +1,17 @@
 package by.epam.ellipse.repository;
 
 
-import by.epam.ellipse.dao.exception.DAOexception;
 import by.epam.ellipse.entity.Ellipse;
-import by.epam.ellipse.registrar.EllipseObservable;
+import by.epam.ellipse.repository.exception.RepositoryException;
 
 import java.util.List;
 
 public interface Specification {
-    void remove(List<EllipseObservable> base, Object identifier) throws DAOexception;
+    void remove(List<Ellipse> ellipses, Object identifier) throws RepositoryException;
 
-    List<Ellipse> takeAll(List<EllipseObservable> base);
+    List<Ellipse> takeAll(List<Ellipse> ellipses) throws RepositoryException;
 
-    List<Ellipse> takeSome(List<EllipseObservable> base, Object from, Object till) throws DAOexception;
+    List<Ellipse> takeSome(List<Ellipse> ellipses, Object from, Object till) throws RepositoryException;
 
-    Ellipse takeOne(List<EllipseObservable> base, Object identifier) throws DAOexception;
+    Ellipse takeOne(List<Ellipse> ellipses, Object identifier) throws RepositoryException;
 }
