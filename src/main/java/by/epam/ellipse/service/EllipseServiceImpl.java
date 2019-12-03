@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EllipseServiceImpl implements EllipseService {
+    private FileManipulator fileManipulator;
+
     private static EllipseServiceImpl instance = new EllipseServiceImpl();
 
     private EllipseServiceImpl() {
+        fileManipulator = FileManipulator.getInstance();
     }
 
     public static EllipseServiceImpl getInstance() {
@@ -33,7 +36,7 @@ public class EllipseServiceImpl implements EllipseService {
     }
 
     @Override
-    public List<Ellipse> createFromFile(String requestToPropFile, FileManipulator fileManipulator) throws ServiceException {
+    public List<Ellipse> createFromFile(String requestToPropFile) throws ServiceException {
 
         try {
             List<Ellipse> ellipses = new ArrayList<>();

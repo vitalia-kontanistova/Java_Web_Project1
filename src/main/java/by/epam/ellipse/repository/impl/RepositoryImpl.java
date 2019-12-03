@@ -5,6 +5,8 @@ import by.epam.ellipse.entity.Point;
 import by.epam.ellipse.repository.Repository;
 import by.epam.ellipse.repository.Specification;
 import by.epam.ellipse.repository.exception.RepositoryException;
+import by.epam.ellipse.service.EllipseServiceImpl;
+import by.epam.ellipse.service.exception.ServiceException;
 import by.epam.ellipse.util.IdGenerator;
 
 import java.util.ArrayList;
@@ -14,22 +16,25 @@ public class RepositoryImpl implements Repository {
 
     private List<Ellipse> ellipses;
     private IdGenerator idGenerator;
+    private EllipseServiceImpl ellipseService;
 
 
     public RepositoryImpl() {
         ellipses = new ArrayList<>();
         idGenerator = IdGenerator.getInstance();
+        ellipseService = EllipseServiceImpl.getInstance();
     }
 
     @Override
     public void add(Ellipse ellipse) throws RepositoryException {
         try {
-            int id = idGenerator.generate(ellipses);
-            ellipse.setId(id);
+            if (ellipseService.isEllipseExist(ellipse)) {
+                int id = idGenerator.generate(ellipses);
+                ellipse.setId(id);
 
-            ellipses.add(ellipse);
-
-        } catch (NullPointerException e) {
+                ellipses.add(ellipse);
+            } else throw new RepositoryException("RepositoryImpl: add(): Trying to add incorrect ellipse.");
+        } catch (NullPointerException | ServiceException e) {
             throw new RepositoryException("RepositoryImpl: add(): " + e.getMessage());
             //запись в лог
         }

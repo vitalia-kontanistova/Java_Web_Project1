@@ -53,7 +53,7 @@ public class FileManipulator {
 
             return property.getProperty(requestToPropFile);
 
-        } catch (IOException e) {
+        } catch (NullPointerException | IOException e) {
             throw new DAOexception("FileManipulator: getFileAddress(): property file is not found. " + e.getMessage());
         }
     }

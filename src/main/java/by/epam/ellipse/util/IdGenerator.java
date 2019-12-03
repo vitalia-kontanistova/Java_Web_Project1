@@ -1,6 +1,7 @@
 package by.epam.ellipse.util;
 
 import by.epam.ellipse.entity.Ellipse;
+import by.epam.ellipse.service.exception.ServiceException;
 
 import java.util.List;
 
@@ -15,14 +16,17 @@ public class IdGenerator {
         return instance;
     }
 
-    public int generate(List<Ellipse> ellipses) {
-        if (ellipses != null && !ellipses.isEmpty()) {
-
-            int index = ellipses.size() - 1;
-
-            Ellipse currentEllipse = ellipses.get(index);
-            return currentEllipse.getId() + 1;
+    public int generate(List<Ellipse> ellipses) throws ServiceException {
+        try {
+            if (ellipses.isEmpty()) {
+                return 1;
+            } else {
+                int index = ellipses.size() - 1;
+                Ellipse currentEllipse = ellipses.get(index);
+                return currentEllipse.getId() + 1;
+            }
+        } catch (NullPointerException e) {
+            throw new ServiceException("IdGenerator: generate(): " + e.getMessage());
         }
-        return 1;
     }
 }
